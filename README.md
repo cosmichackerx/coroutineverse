@@ -62,25 +62,32 @@ fun main() = runBlocking {
 ### ❌ Cancelling a Coroutine
 
 ```kotlin
+// Import all coroutine utilities
 import kotlinx.coroutines.*
 
 fun main() = runBlocking {
+    // Launch a coroutine in the current scope
     val job = launch {
         try {
+            // Repeat 5 times with delay to simulate ongoing work
             repeat(5) { i ->
                 println("Working... $i")
-                delay(500)
+                delay(500) // suspends coroutine for 0.5 seconds
             }
-        } catch (e: CancellationException) {
+        } 
+        // This block catches cancellation
+        catch (e: CancellationException) {
             println("State: CANCELLED ➤ Coroutine ko cancel kar diya gaya")
-        } finally {
+        } 
+        // Always runs (like finally block in try-catch)
+        finally {
             println("🏁 Coroutine COMPLETED ➤ Cleanup done")
         }
     }
 
-    delay(1000)
-    job.cancel()
-    job.join()
+    delay(1000) // Let the coroutine run for a while
+    job.cancel() // Cancel the coroutine
+    job.join() // Wait until coroutine fully terminates
 }
 ```
 
