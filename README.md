@@ -797,3 +797,86 @@ fun main() = runBlocking {
 
 ---
 ---
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🔄 Switching Context with `withContext(Dispatchers.IO)`  
+
+## 🔤 Definitions ( withContext(Dispatchers.IO) )
+
+- **`withContext(dispatcher) {}`**  
+  Suspends the current coroutine and switches its execution to a different dispatcher (thread pool). Commonly used for I/O or CPU-bound tasks.
+
+- **`Dispatchers.IO`**  
+  Optimized for I/O-bound operations like network requests, file reading, or database access.
+
+- **Context Switching**  
+  Allows coroutines to run on the most suitable thread for the task, improving performance and responsiveness.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Concept             | Mnemonic (English)                                      | Analogy (Urdu)                                                                 |
+|----------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
+| `withContext(IO)`    | "Send the worker to the server room"                   | **Worker ko server room bhej diya gaya hai taake data le aaye**               |
+| `Dispatchers.IO`     | "Best place for slow I/O tasks"                        | **Aisi jagah jahan file read/write aur network ka kaam hota hai**             |
+| `runBlocking`        | "Main office that waits for all workers"              | **Manager ka office jahan sab kaam mukammal hone ka intezar hota hai**        |
+
+---
+
+## 💻 Code Examples
+
+### 🌐 Network Request with `withContext(Dispatchers.IO)`
+
+```kotlin
+import kotlinx.coroutines.*
+
+/**
+ * 🛰️ Simulates a network call to fetch data from a server.
+ * Ideal for Dispatchers.IO — because it’s I/O-bound (waiting on external data).
+ */
+suspend fun fetchDataFromServer(url: String): String {
+    println("  [Manager]: Need data from '$url'.")
+    println("  [Manager]: Dispatching a worker to the 'Server Room' (Dispatchers.IO).")
+
+    // 🔄 Switch context from the current thread (main) to the IO dispatcher
+    return withContext(Dispatchers.IO) {
+        println("    [IO Worker]: Arrived at 'Server Room'. (Thread: ${Thread.currentThread().name})")
+        println("    [IO Worker]: Making network request to '$url'...")
+
+        // 🕒 Simulate a delay (representing network wait time)
+        delay(1500L)
+
+        println("    [IO Worker]: ...Got response! Returning data to Manager.")
+        "{'data': 'This is the server response'}" // Return result back to caller
+    }
+}
+
+fun main() = runBlocking {
+    // 🏢 The "Manager's Office" — our main thread
+    println("Manager (main): I'm in my office. (Thread: ${Thread.currentThread().name})")
+
+    // 🚀 Launch a coroutine for the background task
+    val job = launch {
+        val serverData = fetchDataFromServer("https://api.example.com/data")
+
+        // 💡 Once withContext() completes, control returns to the main thread
+        println("Manager (main): Back in the office. (Thread: ${Thread.currentThread().name})")
+        println("Manager (main): Worker returned: $serverData")
+    }
+
+    // 🧾 Meanwhile, the manager does other tasks while the IO worker waits for response
+    println("Manager (main): Worker is off to the server. I'll do my own paperwork.")
+    delay(500L)
+    println("Manager (main): ...filing reports...")
+    delay(500L)
+    println("Manager (main): ...paperwork done. Worker should be back soon.")
+
+    // 🕓 Wait for launched job to finish before closing runBlocking
+    job.join()
+}
+```
+
+---
+---
