@@ -885,7 +885,7 @@ fun main() = runBlocking {
 
 ## 🌀 `Dispatchers.Unconfined` in Kotlin  
 
-## 🔤 Definitions
+## 🔤 Definitions (Dispatchers.Unconfined)
 
 - **`Dispatchers.Unconfined`**  
   A coroutine dispatcher that starts execution in the current thread but may resume on a different thread after suspension. It’s not confined to any specific thread or thread pool.
