@@ -306,3 +306,100 @@ fun main() = runBlocking {
 
 ---
 ---
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## ⏳ `delay()` vs `Thread.sleep()` in Coroutines  
+
+## 🔤 Definitions (delay() vs Thread.sleep())
+
+- **`delay(timeMillis)`**  
+  Suspends the coroutine without blocking the thread. Other coroutines can run during this time. Ideal for non-blocking asynchronous tasks.
+
+- **`Thread.sleep(timeMillis)`**  
+  Blocks the entire thread. No other coroutine on that thread can run until sleep ends. Not recommended inside coroutines.
+
+- **Concurrency Impact**  
+  `delay()` enables concurrent execution, while `Thread.sleep()` forces sequential blocking.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Concept           | Mnemonic (English)                                      | Analogy (Urdu)                                                                 |
+|-------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
+| `delay()`         | "Pause the coroutine, but let others work"              | **Chef ne paani ubalne diya, aur saath saath sabzi kaat li**                 |
+| `Thread.sleep()`  | "Freeze the thread, no one else can work"               | **Chef sirf pateeli ko ghoorta raha, sabzi kaatna bhi ruk gaya**             |
+| `runBlocking`     | "Kitchen manager waits till all tasks finish"           | **Manager tab tak rukta hai jab tak sab kaam mukammal na ho jayein**         |
+
+---
+
+## 💻 Code Examples
+
+### 🍳 Comparing Non-Blocking vs Blocking in the Kitchen
+
+```kotlin
+// Import coroutine utilities and time measurement function
+import kotlinx.coroutines.*
+import kotlin.system.measureTimeMillis
+
+fun main() {
+    println("--- Example 1: Using delay() (Non-Blocking) ---")
+    println("Analogy: The Chef puts water on to boil, then chops veggies while waiting.\n")
+
+    // Measure how long the non-blocking example takes
+    val nonBlockingTime = measureTimeMillis {
+        runBlocking {
+            // Coroutine 1: Boil water
+            launch {
+                println("  [Boil Water]: Starting... (will 'delay' for 1000ms)")
+                // D = Don't Block Delay
+                // 'delay()' suspends this coroutine but frees the thread 
+                // so other coroutines can run meanwhile.
+                delay(1000L)
+                println("  [Boil Water]: ...Water is boiling!")
+            }
+
+            // Coroutine 2: Chop vegetables
+            launch {
+                println("    [Chop Veggies]: Starting to chop veggies...")
+                delay(250L) // First chopping phase
+                println("    [Chop Veggies]: ...still chopping...")
+                delay(250L) // Second chopping phase
+                println("    [Chop Veggies]: ...Veggies are done.")
+            }
+        }
+    }
+    println("Total time for Example 1: $nonBlockingTime ms (✅ Both tasks ran concurrently)\n")
+
+
+    println("--- Example 2: Using Thread.sleep() (Blocking) ---")
+    println("Analogy: The Chef *stares* at the pot, blocking all other work.\n")
+
+    // Measure how long the blocking example takes
+    val blockingTime = measureTimeMillis {
+        runBlocking {
+            // Coroutine 1: Boil water (but using Thread.sleep)
+            launch {
+                println("  [Stare at Pot]: Starting... (will 'Thread.sleep' for 1000ms)")
+                // This BLOCKS the entire thread.
+                // While sleeping, no other coroutine on this thread can execute.
+                Thread.sleep(1000L)
+                println("  [Stare at Pot]: ...Water is boiling!")
+            }
+
+            // Coroutine 2: Chop vegetables
+            launch {
+                println("    [Chop Veggies]: Starting to chop veggies...")
+                delay(250L)
+                println("    [Chop Veggies]: ...still chopping...")
+                delay(250L)
+                println("    [Chop Veggies]: ...Veggies are done.")
+            }
+        }
+    }
+    println("Total time for Example 2: $blockingTime ms (❌ Tasks ran one after the other)")
+}
+```
+
+---
+---
