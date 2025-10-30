@@ -226,3 +226,85 @@ fun main() = runBlocking { // 'runBlocking' ensures main waits for all child cor
 
 ---
 ---
+
+## ⚡ `async` & `await` in Kotlin  
+**(Separation from previous concepts)**  
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🔤 Definitions (async & await)
+
+- **`async {}`**  
+  Starts a coroutine that returns a result via a `Deferred<T>`. Multiple `async` blocks can run concurrently.
+
+- **`await()`**  
+  Suspends the current coroutine until the result of the `Deferred` is ready. It’s non-blocking and efficient.
+
+- **Concurrency vs Parallelism**  
+  `async` enables **concurrent** execution — tasks start together and run independently, saving time.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Concept        | Mnemonic (English)                                      | Analogy (Urdu)                                                                 |
+|----------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
+| `async`        | "Send multiple requests at once"                        | **Ek saath do kaam ke liye farmaish bhej di gayi**                            |
+| `await()`      | "Wait for each answer when it’s ready"                  | **Har jawab ka intezar jab wo tayar ho jaye**                                 |
+| `Deferred`     | "Promise of a future result"                            | **Wada kiya gaya hai ke result baad mein milega**                             |
+| `measureTimeMillis` | "Track total time taken for tasks"                | **Pura waqt naapne ke liye stopwatch lagaya gaya hai**                        |
+
+---
+
+## 💻 Code Examples
+
+### 👤 Building a User Profile Concurrently with `async` & `await`
+
+```kotlin
+// Import coroutine features and utility for measuring execution time
+import kotlinx.coroutines.*
+import kotlin.system.measureTimeMillis
+
+// Simulates a slow network call to fetch a user's name
+suspend fun fetchUsername(): String {
+    println("  [Async 1]: Asking for username... (will take 1000ms)")
+    delay(1000L) // Simulate network delay
+    return "KotlinHero" // Return fetched username
+}
+
+// Simulates a slow network call to fetch a profile picture
+suspend fun fetchProfilePictureUrl(): String {
+    println("  [Async 2]: Asking for profile picture... (will take 1500ms)")
+    delay(1500L) // Simulate network delay
+    return "https://example.com/pic.png" // Return fetched picture URL
+}
+
+fun main() = runBlocking {
+    println("Main: Need to build the user profile. I will ask for data.\n")
+
+    val totalTime = measureTimeMillis {
+        // 'async' = start concurrent tasks that return results
+        // Both requests start *at the same time* (not one after another)
+        val deferredUsername: Deferred<String> = async { fetchUsername() }
+        val deferredPictureUrl: Deferred<String> = async { fetchProfilePictureUrl() }
+
+        println("Main: I have 'asked' for both username and picture. Now I wait for the answers.")
+        println("Main: ...waiting...\n")
+
+        // 'await()' suspends until the result is ready (non-blocking)
+        val username = deferredUsername.await()
+        println("Main: Got the username! It is '$username'")
+
+        val pictureUrl = deferredPictureUrl.await()
+        println("Main: Got the picture URL! It is '$pictureUrl'\n")
+
+        // Use both results together
+        println("Main: ✅ Success! Displaying profile for '$username' with image at '$pictureUrl'")
+    }
+
+    // Measure total time — should be close to the longest single delay (≈1500ms)
+    println("\nMain: Total time taken: $totalTime ms")
+}
+```
+
+---
+---
