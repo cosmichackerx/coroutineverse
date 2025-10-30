@@ -1108,7 +1108,7 @@ fun main() = runBlocking { // The "Restaurant" is the main CoroutineScope
 
 ## 🔄 Context Switching with `withContext(IO)` & `withContext(Default)`  
 
-## 🔤 Definitions
+## 🔤 Definitions ( withContext() )
 
 - **`withContext(Dispatchers.IO)`**  
   Switches coroutine execution to a thread optimized for I/O-bound tasks like network calls or file access.
@@ -1191,6 +1191,121 @@ fun main() = runBlocking { // 🧠 The "Manager's Office"
     println("[Manager]: Final result: $finalAnalysis")
 
     println("\n[Manager]: ✅ All tasks done. My thread never got blocked!")
+}
+```
+
+---
+---
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🧩 `Job` vs `SupervisorJob` — Handling Failure in Coroutine Teams  
+
+## 🔤 Definitions (Job vs SupervisorJob)
+
+- **`Job`**  
+  A regular coroutine job. If one child coroutine fails, it cancels all its siblings and the parent.
+
+- **`SupervisorJob`**  
+  A special job that isolates failures. If one child fails, it doesn’t cancel the others.
+
+- **`CoroutineExceptionHandler`**  
+  A handler that catches uncaught exceptions in coroutines and logs or handles them gracefully.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Concept           | Mnemonic (English)                                      | Analogy (Urdu)                                                                 |
+|--------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
+| `Job`              | "Panicked team lead — shuts down everyone on failure"  | **Ghabraya hua lead — ek worker fail hua to sab ko nikaal diya**              |
+| `SupervisorJob`    | "Calm team lead — handles failure without panic"       | **Samajhdar lead — ek worker fail hua to baqi team ko kaam karne diya**       |
+| `CoroutineExceptionHandler` | "Catch and log the crash"                     | **Crash hone par exception ko pakar kar report karna**                         |
+
+---
+
+## 💻 Code Examples
+
+### 🧪 Comparing `Job` vs `SupervisorJob` with Team Lead Behavior
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+
+    // ============================================================
+    // 🧩 EXAMPLE 1 — Regular Job (The “Panicked” Team Lead)
+    // ============================================================
+
+    println("--- Example 1: Regular Job (The 'Panicked' Team Lead) ---")
+    println("If one worker fails, the lead cancels the *entire* team.\n")
+
+    // 🧠 Exception handler for the regular Job
+    val normalExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        println("  [Panicked Lead]: A worker failed! SHUT DOWN THE WHOLE TEAM! (Caught $exception)")
+    }
+
+    // 👷‍♂️ Create a scope using a *regular* Job
+    val normalScope = CoroutineScope(Job() + normalExceptionHandler)
+
+    // 👨‍🔧 Worker A — This one will FAIL
+    normalScope.launch {
+        println("    [Worker A]: Starting. I will fail in 500ms.")
+        delay(500L)
+        throw RuntimeException("Worker A: I dropped the data!") // Triggers cancellation
+    }
+
+    // 👩‍🔧 Worker B — This one is fine but will get cancelled
+    normalScope.launch {
+        println("    [Worker B]: Starting my long 2-second task.")
+        try {
+            delay(2000L)
+            println("    [Worker B]: ...Finished my task.") // ❌ Won’t be reached
+        } catch (e: CancellationException) {
+            println("    [Worker B]: ...I was cancelled by the panicked lead! Why?!")
+        }
+    }
+
+    delay(3000L)
+    println("\n--- Example 1 Finished ---\n")
+
+
+
+    // ============================================================
+    // 🧩 EXAMPLE 2 — SupervisorJob (The “SJ” Good Team Lead)
+    // ============================================================
+
+    println("--- Example 2: SupervisorJob (The 'SJ' Good Team Lead) ---")
+    println("If one worker fails, the lead handles it calmly, and the rest of the team continues.\n")
+
+    // 🧠 Exception handler for SupervisorJob
+    val supervisorExceptionHandler = CoroutineExceptionHandler { _, exception ->
+        println("  [Supervisor Lead]: A worker failed. I will log it and let the team continue. (Caught $exception)")
+    }
+
+    // 👷‍♀️ Create a scope using a *SupervisorJob*
+    val supervisorScope = CoroutineScope(SupervisorJob() + supervisorExceptionHandler)
+
+    // 👨‍🔧 Worker C — This one will FAIL
+    supervisorScope.launch {
+        println("    [Worker C]: Starting. I will fail in 500ms.")
+        delay(500L)
+        throw RuntimeException("Worker C: I dropped the data!") // Triggers exception but not mass cancellation
+    }
+
+    // 👩‍🔧 Worker D — This one continues successfully
+    supervisorScope.launch {
+        println("    [Worker D]: Starting my long 2-second task.")
+        try {
+            delay(2000L)
+            println("    [Worker D]: ...Finished my task successfully!") // ✅ Will be reached
+        } catch (e: CancellationException) {
+            println("    [Worker D]: ...I was cancelled! (This shouldn't happen)")
+        }
+    }
+
+    delay(3000L)
+    println("\n--- Example 2 Finished ---")
 }
 ```
 
