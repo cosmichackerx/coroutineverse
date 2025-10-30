@@ -29,6 +29,8 @@
 | `CANCELLED`  | "Emergency brake pulled"                        | **Brake maar di gayi** – kaam adhura chhod diya gaya                          |
 | `COMPLETED`  | "Reached destination"                           | **Manzil mil gayi** – coroutine ne apna kaam mukammal kar liya 🏁              |
 
+![1](resources/1.png)
+![2](resources/2.png)
 ---
 
 ## 💻 Code Examples
@@ -93,6 +95,7 @@ fun main() = runBlocking {
 ```
 
 ---
+![3](resources/3.png)
 ---
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
