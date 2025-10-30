@@ -16,7 +16,7 @@
   - `SUSPENDED`: Coroutine is paused temporarily (e.g., via `delay()`).
   - `CANCELLED`: Coroutine was stopped before completion.
   - `COMPLETED`: Coroutine finished its task successfully.
-
+![0](resources/0.png)
 ---
 
 ## 🧠 Mnemonics & Analogies (English + Urdu)
