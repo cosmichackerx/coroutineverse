@@ -625,3 +625,85 @@ fun main() = runBlocking {
 
 ---
 ---
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🧭 Coroutine Dispatchers in Kotlin  
+
+## 🔤 Definitions (Coroutine Dispatchers)
+
+- **`Dispatchers.IO`**  
+  Optimized for I/O-bound tasks like reading files, accessing databases, or making network calls.
+
+- **`Dispatchers.Default`**  
+  Designed for CPU-intensive tasks like sorting, calculations, or data processing.
+
+- **`Dispatchers.Unconfined`**  
+  Starts in the current thread but may resume on a different thread after suspension. Useful for lightweight tasks or debugging.
+
+- **`runBlocking`**  
+  Blocks the current thread until all child coroutines complete. Often used in `main()` functions.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Dispatcher         | Mnemonic (English)                                      | Analogy (Urdu)                                                                 |
+|--------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
+| `Dispatchers.IO`   | "Warehouse for slow I/O tasks"                          | **Warehouse jahan file read/write aur network ka kaam hota hai**              |
+| `Dispatchers.Default` | "Office for fast brain work"                        | **Office jahan calculations aur data processing hoti hai**                    |
+| `Dispatchers.Unconfined` | "Freelancer who works anywhere"                 | **Freelancer jo pehle ek jagah kaam shuru karta hai, phir kahin aur chala jata hai** |
+| `runBlocking`      | "Main desk that waits for all workers"                 | **Main desk jahan manager sab kaam mukammal hone ka intezar karta hai**       |
+
+---
+
+## 💻 Code Examples
+
+### 🧵 Dispatching Tasks to Different Workstations
+
+```kotlin
+import kotlinx.coroutines.*  // Import coroutine support
+
+fun main() = runBlocking {
+    // 🏢 This 'runBlocking' coroutine is our "Main Desk"
+    // It runs on the main thread and waits for all child coroutines to complete.
+    println("Main Desk ('runBlocking'): Running on thread ➤ ${Thread.currentThread().name}\n")
+
+    // ───────────────────────────────
+    // 1️⃣ Dispatchers.IO  → "Warehouse" for I/O heavy tasks (e.g., reading files, network calls)
+    // ───────────────────────────────
+    launch(Dispatchers.IO) {
+        println("  [IO Workstation]: Task started ➤ Thread: ${Thread.currentThread().name}")
+        delay(500L) // Simulate I/O operation (suspends coroutine)
+        println("  [IO Workstation]: ...Task finished ✅")
+    }
+
+    // ───────────────────────────────
+    // 2️⃣ Dispatchers.Default  → "Office" for CPU-heavy tasks (e.g., computations)
+    // ───────────────────────────────
+    launch(Dispatchers.Default) {
+        println("  [Default Office]: Task started ➤ Thread: ${Thread.currentThread().name}")
+        var count = 0
+        repeat(100_000) { count += 1 } // Simulate CPU work
+        println("  [Default Office]: ...Task finished ✅ (Counted to $count)")
+    }
+
+    // ───────────────────────────────
+    // 3️⃣ Dispatchers.Unconfined  → "Freelancer"
+    // Starts in the current thread but may resume on a different one after suspension.
+    // ───────────────────────────────
+    launch(Dispatchers.Unconfined) {
+        println("  [Unconfined Task]: Started ➤ Thread: ${Thread.currentThread().name}")
+        delay(100L) // Suspension point (context may change)
+        println("  [Unconfined Task]: Resumed ➤ Thread: ${Thread.currentThread().name}")
+    }
+
+    // ───────────────────────────────
+    // The main desk will wait for all launched tasks to finish before ending.
+    // ───────────────────────────────
+    println("\nMain Desk ('runBlocking'): All tasks dispatched. Waiting for them to complete...")
+}
+```
+
+---
+---
