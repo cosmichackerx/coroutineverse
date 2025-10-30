@@ -228,7 +228,7 @@ fun main() = runBlocking { // 'runBlocking' ensures main waits for all child cor
 ---
 
 ## ⚡ `async` & `await` in Kotlin  
-**(Separation from previous concepts)**  
+  
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ## 🔤 Definitions (async & await)
