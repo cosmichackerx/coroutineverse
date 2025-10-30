@@ -93,3 +93,70 @@ fun main() = runBlocking {
 
 ---
 ---
+
+## 🧭 `runBlocking` & `launch` in Kotlin  
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🔤 Definitions (runBlocking)
+
+- **`runBlocking {}`**  
+  Blocks the current thread until all coroutines inside it complete. Commonly used in `main()` or tests. Think of it as the **shift manager** who waits until all tasks are done before closing the kitchen.
+
+- **`launch {}`**  
+  Starts a new coroutine without blocking the current thread. Think of it as assigning a task to a **kitchen worker** who works independently.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Concept        | Mnemonic (English)                                  | Analogy (Urdu)                                                                 |
+|----------------|------------------------------------------------------|--------------------------------------------------------------------------------|
+| `runBlocking`  | "Main manager waits till all tasks are done"        | **Kitchen ka manager har kaam mukammal hone tak rukta hai**                   |
+| `launch`       | "Assign task to worker, let them work independently" | **Kaam kisi worker ko de diya, ab wo apne hisaab se karega**                 |
+| `delay()`      | "Simulates time taken for a task"                   | **Kaam mein lagne wala waqt dikhane ke liye delay use hota hai**             |
+
+---
+
+## 💻 Code Examples
+
+### 🍽️ Kitchen Shift Simulation with `runBlocking` and `launch`
+
+```kotlin
+// Import coroutine library
+import kotlinx.coroutines.*
+
+fun main() {
+    println("Program Start: Opening the kitchen for the shift.")
+
+    // runBlocking = Acts like the whole kitchen shift manager.
+    // It blocks the main thread until all assigned coroutine tasks inside it are done.
+    runBlocking {
+        println("  [runBlocking]: Kitchen shift starts. (Thread: ${Thread.currentThread().name})")
+
+        // Task 1: Washing dishes (takes ~1 second)
+        launch {
+            println("    [Launch 1]: Started washing dishes...")
+            delay(1000L) // Simulate a long-running task
+            println("    [Launch 1]: ...Dishes are clean.")
+        }
+
+        // Task 2: Prepping vegetables (takes ~0.5 seconds)
+        launch {
+            println("    [Launch 2]: Started prepping vegetables...")
+            delay(500L) // Simulate a shorter task
+            println("    [Launch 2]: ...Vegetables are prepped.")
+        }
+
+        // This part runs right after launching both tasks.
+        println("  [runBlocking]: Main coroutine has assigned all tasks and is now waiting...")
+        // runBlocking will pause here until both 'launch' coroutines finish.
+    }
+
+    // This line runs only after runBlocking (and all its coroutines) complete.
+    println("Program End: All kitchen tasks are done. Shift over. Locking the door.")
+}
+```
+
+---
+---
