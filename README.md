@@ -35,24 +35,27 @@
 ### ✅ Basic Coroutine with Lifecycle Logging
 
 ```kotlin
+// Importing all coroutine features
 import kotlinx.coroutines.*
 
 fun main() = runBlocking {
+    // Creating a coroutine lazily (not started yet)
     val job = launch(start = CoroutineStart.LAZY) {
         println("🔥 Coroutine ACTIVE")
-        delay(1000)
+        delay(1000) // suspends coroutine for 1 second
         println("🏁 Coroutine COMPLETED")
     }
 
-    println("State: NEW ➤ Coroutine created lazily")
-    job.start()
-    println("State: ACTIVE ➤ Coroutine start ho gayi hai")
+    println("State: NEW ➤ Coroutine created lazily (not started yet)")
 
-    delay(500)
-    println("State: SUSPENDED ➤ delay() ne coroutine ko temporarily roka hai")
+    job.start() // starting the coroutine manually
+    println("State: ACTIVE ➤ Coroutine started running")
 
-    job.join()
-    println("State: COMPLETED ➤ coroutine ka kaam khatam ho gaya")
+    delay(500) // simulate mid-execution suspension
+    println("State: SUSPENDED ➤ delay() temporarily paused coroutine")
+
+    job.join() // wait until coroutine finishes execution
+    println("State: COMPLETED ➤ Coroutine work finished successfully")
 }
 ```
 
