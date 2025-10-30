@@ -880,3 +880,71 @@ fun main() = runBlocking {
 
 ---
 ---
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🌀 `Dispatchers.Unconfined` in Kotlin  
+
+## 🔤 Definitions
+
+- **`Dispatchers.Unconfined`**  
+  A coroutine dispatcher that starts execution in the current thread but may resume on a different thread after suspension. It’s not confined to any specific thread or thread pool.
+
+- **Use Case**  
+  Best suited for lightweight tasks or debugging. Not recommended for UI or production-critical code due to unpredictable thread behavior.
+
+- **Suspension Behavior**  
+  After a suspension point (e.g., `delay()`), the coroutine may resume on a different thread.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Concept               | Mnemonic (English)                                      | Analogy (Urdu)                                                                 |
+|------------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
+| `Unconfined`           | "Freelancer who works anywhere, anytime"               | **Freelancer jo kaam shuru ek jagah karta hai, lekin resume kahin aur karta hai** |
+| `delay()`              | "Pause point that frees the thread"                    | **Kaam mein thoda rukawat jahan thread free ho jata hai**                     |
+| `runBlocking`          | "Manager’s desk that waits for all workers"           | **Manager ka desk jahan sab kaam mukammal hone ka intezar hota hai**          |
+
+---
+
+## 💻 Code Examples
+
+### 🧑‍💻 Freelance Worker Analogy with `Dispatchers.Unconfined`
+
+```kotlin
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    // 🏢 The Manager is the main coroutine running on the main thread
+    println("Manager (runBlocking): I'm on my thread: ${Thread.currentThread().name}")
+    println("Manager (runBlocking): I'm hiring an 'Unconfined' freelancer...")
+
+    // 🌀 U = Unconfined (Free)
+    // This coroutine is not restricted to any specific thread.
+    // It can start on one thread and resume on another.
+    launch(Dispatchers.Unconfined) {
+        // 1️⃣ THE START
+        println("  Freelancer (Unconfined): STARTING work. Using thread: ${Thread.currentThread().name}")
+
+        // 2️⃣ THE SUSPENSION
+        println("  Freelancer (Unconfined): ...doing research (delaying 500ms)...")
+        delay(500L) // Suspension point — coroutine pauses, freeing thread
+
+        // 3️⃣ THE RESUMPTION
+        // After delay, resumes on a different thread (not guaranteed same one)
+        println("  Freelancer (Unconfined): RESUMING work on possibly another thread: ${Thread.currentThread().name}")
+
+        println("  Freelancer (Unconfined): ...Work done.")
+    }
+
+    // The Manager continues working on the main thread
+    println("Manager (runBlocking): Freelancer started instantly (no dispatch delay).")
+    println("Manager (runBlocking): I'll do my own work for 1 second...")
+    delay(1000L)
+    println("Manager (runBlocking): My work is done. Program can now end.")
+}
+```
+
+---
+---
