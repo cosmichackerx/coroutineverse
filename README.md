@@ -3,8 +3,9 @@
 **Definitions** | **Mnemonics (English+Urdu)** | **Code Examples** | **Real-world use cases**
 
 ---
-## 🧵 Kotlin Coroutines  
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## 🧵 Kotlin Coroutines  
 
 ## 🔤 Definitions
 
@@ -94,9 +95,8 @@ fun main() = runBlocking {
 ---
 ---
 
-## 🧭 `runBlocking` & `launch` in Kotlin  
-
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## 🧭 `runBlocking` & `launch` in Kotlin  
 
 ## 🔤 Definitions (runBlocking)
 
@@ -161,9 +161,8 @@ fun main() {
 ---
 ---
 
-## 🧑‍💼 `launch` with `job.join()` in `runBlocking`  
- 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## 🧑‍💼 `launch` with `job.join()` in `runBlocking`  
 
 ## 🔤 Definitions (launch)
 
@@ -227,9 +226,8 @@ fun main() = runBlocking { // 'runBlocking' ensures main waits for all child cor
 ---
 ---
 
-## ⚡ `async` & `await` in Kotlin  
-  
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## ⚡ `async` & `await` in Kotlin  
 
 ## 🔤 Definitions (async & await)
 
