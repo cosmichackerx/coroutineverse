@@ -98,7 +98,7 @@ fun main() = runBlocking {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ## 🧭 `runBlocking` & `launch` in Kotlin  
 
-## 🔤 Definitions (runBlocking)
+## 🔤 Definitions (runBlocking & launch)
 
 - **`runBlocking {}`**  
   Blocks the current thread until all coroutines inside it complete. Commonly used in `main()` or tests. Think of it as the **shift manager** who waits until all tasks are done before closing the kitchen.
