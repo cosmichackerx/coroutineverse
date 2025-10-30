@@ -707,3 +707,93 @@ fun main() = runBlocking {
 
 ---
 ---
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🧮 CPU-Intensive Work with `Dispatchers.Default`  
+
+## 🔤 Definitions
+
+- **`Dispatchers.Default`**  
+  Optimized for CPU-bound tasks like sorting, calculations, and data transformations. Uses a shared pool of background threads.
+
+- **`launch(Dispatchers.Default)`**  
+  Starts a coroutine on a thread suitable for CPU-heavy operations.
+
+- **`measureTimeMillis {}`**  
+  Measures how long a block of code takes to execute in milliseconds.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Concept               | Mnemonic (English)                                      | Analogy (Urdu)                                                                 |
+|------------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
+| `Dispatchers.Default` | "Send to the CPU desk for brain-heavy work"             | **CPU Desk jahan calculations aur sorting jaise kaam hote hain**              |
+| `launch`              | "Assign a worker to do the task"                        | **Worker ko kaam de diya, wo apne thread par kaam karega**                    |
+| `measureTimeMillis`   | "Track how long the whole task took"                    | **Stopwatch lagaya gaya taake total waqt naap sakein**                        |
+
+---
+
+## 💻 Code Examples
+
+### 🧠 Sorting a Massive List with `Dispatchers.Default`
+
+```kotlin
+import kotlinx.coroutines.*        // Coroutine library
+import kotlin.random.Random        // For generating random numbers
+import kotlin.system.measureTimeMillis // To measure total execution time
+
+// ⚙️ Heavy CPU-intensive task (Sorting a massive list)
+suspend fun sortHugeList(): List<Int> {
+    // Show which thread this coroutine is running on
+    println("  [CPU Desk]: Task started ➤ Thread: ${Thread.currentThread().name}")
+    println("  [CPU Desk]: Sorting 50,000,000 numbers...")
+
+    // Generate a large list of random integers
+    val bigList = List(50_000_000) { Random.nextInt() }
+
+    // 'sorted()' is CPU-bound, so it's ideal for Dispatchers.Default
+    val sortedList = bigList.sorted()
+
+    println("  [CPU Desk]: ...Sorting complete ✅")
+    return sortedList
+}
+
+fun main() = runBlocking {
+    // 🏢 Main coroutine (acts like the manager)
+    println("Manager (main): Running on thread ➤ ${Thread.currentThread().name}")
+    println("Manager (main): I need this giant list sorted, but I can’t do it myself.")
+    println("Manager (main): Dispatching the task to the Default CPU Desk.\n")
+
+    var resultList: List<Int> = emptyList()
+
+    // ⏱ Measure total time taken for sorting + other manager tasks
+    val timeTaken = measureTimeMillis {
+        
+        // ⚡ Launching a coroutine on Dispatchers.Default (optimized for CPU work)
+        val job = launch(Dispatchers.Default) {
+            resultList = sortHugeList()
+        }
+
+        // 🧑‍💼 Meanwhile, the Manager continues doing other short tasks
+        println("Manager (main): The CPU Desk is working. I'm free to multitask...")
+        delay(500L)
+        println("Manager (main): ...just checked my email.")
+        delay(500L)
+        println("Manager (main): ...had some coffee ☕")
+
+        // 🕓 Wait for the CPU worker to finish
+        println("Manager (main): Now, I’ll wait for that job to be done.")
+        job.join()
+    }
+
+    // ✅ After completion
+    println("\nManager (main): The CPU Desk finished the job!")
+    println("Manager (main): The first number in the sorted list is ${resultList.first()}.")
+    println("Manager (main): Total time taken: $timeTaken ms")
+}
+```
+
+---
+---
