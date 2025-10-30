@@ -1311,3 +1311,103 @@ fun main() = runBlocking {
 
 ---
 ---
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🧭 Coroutine Dispatchers + `GlobalScope`  
+
+## 🔤 Definitions ( Coroutine Dispatchers + GlobalScope )
+
+- **`Dispatchers.Default`**  
+  Optimized for CPU-bound tasks like data analysis, sorting, and computation.
+
+- **`Dispatchers.IO`**  
+  Designed for I/O-bound tasks like file reading, network calls, and database access.
+
+- **`Dispatchers.Unconfined`**  
+  Starts in the current thread and may resume on a different thread after suspension. Lightweight and flexible.
+
+- **`GlobalScope.launch {}`**  
+  Launches a coroutine that lives independently of the current scope. It’s not tied to `runBlocking` or any structured parent.
+
+- **`join()`**  
+  Suspends the current coroutine until the target coroutine completes. Required for waiting on `GlobalScope` tasks.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Concept               | Mnemonic (English)                                      | Analogy (Urdu)                                                                 |
+|------------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
+| `Dispatchers.Default` | "Send to CPU desk for brain-heavy work"                | **CPU Desk jahan calculations aur analysis hoti hai**                         |
+| `Dispatchers.IO`      | "Send to server room for I/O tasks"                    | **Server Room jahan file download aur network ka kaam hota hai**              |
+| `Dispatchers.Unconfined` | "Freelancer who floats between threads"            | **Freelancer jo kaam shuru ek jagah karta hai, phir kahin aur chala jata hai** |
+| `GlobalScope`         | "Company-wide task not managed by the office"          | **Company ka kaam jo manager ke scope se bahar hai**                          |
+| `join()`              | "Wait manually for independent task to finish"         | **Manager ko global kaam ka intezar khud se karna padta hai**                 |
+
+---
+
+## 💻 Code Examples
+
+### 🧑‍💼 Dispatching Tasks + Handling `GlobalScope`
+
+```kotlin
+import kotlinx.coroutines.*
+
+// 🌍 GS = Global Scope
+// A "Company-wide" task launched outside any specific manager (runBlocking).
+// It starts as soon as the program runs and continues independently.
+@OptIn(DelicateCoroutinesApi::class)
+val globalTask = GlobalScope.launch {
+    println("[GlobalScope]: (Company-wide task started... e.g., checking for updates) Thread: ${Thread.currentThread().name}")
+    delay(2500L) // Simulate a long-running background job
+    println("[GlobalScope]: (...Company-wide task finished)")
+}
+
+fun main() = runBlocking { // 🏢 The "Manager's Office" (Main Thread)
+    println("Manager: Starting my day. I'm on thread: ${Thread.currentThread().name}\n")
+
+    // 🧭 D = Dispatcher
+    // The Manager assigns tasks to different "workstations" based on the nature of the job.
+
+    // 🧮 Def = Default Dispatcher (CPU-Intensive)
+    // For heavy CPU-bound work (like data analysis or computation)
+    launch(Dispatchers.Default) {
+        println("  [Default-CPU Desk]: Started. (Analyzing big report...) Thread: ${Thread.currentThread().name}")
+        delay(1000L) // Simulate CPU-heavy processing
+        println("  [Default-CPU Desk]: ...Report analyzed.")
+    }
+
+    // 💾 IO = Input/Output Dispatcher (I/O-Intensive)
+    // For reading/writing files, network calls, or database operations
+    launch(Dispatchers.IO) {
+        println("  [IO-Server Room]: Started. (Downloading file...) Thread: ${Thread.currentThread().name}")
+        delay(1500L) // Simulate I/O delay
+        println("  [IO-Server Room]: ...File downloaded.")
+    }
+
+    // 🕊️ U = Unconfined Dispatcher (Thread-Free / Floating Task)
+    // Starts immediately in the current thread but can resume on another thread after suspension
+    launch(Dispatchers.Unconfined) {
+        println("  [Unconfined-Freelancer]: START. (I'm in the Manager's office!) Thread: ${Thread.currentThread().name}")
+        delay(100L) // Suspends for a moment...
+        println("  [Unconfined-Freelancer]: RESUME. (Now I'm... somewhere else!) Thread: ${Thread.currentThread().name}")
+    }
+
+    // 🧍 Manager (main coroutine) continues working while others run
+    println("Manager: I've dispatched my three workers. I'll wait 2 seconds for them.")
+    delay(2000L) // Wait for Default, IO, and Unconfined tasks
+    println("\nManager: My in-house team is done.")
+
+    // ⚙️ Note:
+    // runBlocking waits for its *child coroutines* only.
+    // The globalTask is NOT a child — it runs independently.
+    println("Manager: Now, I must 'join' and wait for the 'GlobalScope' task to finish before I can go home.")
+    globalTask.join() // Wait for the company-wide (global) task to finish
+
+    println("Manager: The 'GlobalScope' task is done. All work finished. Closing the office.")
+}
+```
+
+---
+---
