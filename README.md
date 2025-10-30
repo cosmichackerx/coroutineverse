@@ -466,3 +466,81 @@ fun main() = runBlocking {
 
 ---
 ---
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🛑 Coroutine Cancellation with `cancel()`  
+
+## 🔤 Definitions ( cancel() )
+
+- **`cancel()`**  
+  Sends a cancellation signal to a coroutine. If the coroutine is suspended (e.g., at `delay()`), it throws a `CancellationException`.
+
+- **`try-catch-finally` in coroutines**  
+  Used to handle cancellation gracefully. `catch` handles the cancellation exception, and `finally` ensures cleanup (e.g., closing files, releasing resources).
+
+- **Suspension Point**  
+  A place like `delay()` where the coroutine checks for cancellation and can be interrupted.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Concept           | Mnemonic (English)                                      | Analogy (Urdu)                                                                 |
+|-------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
+| `cancel()`        | "Cut off the task midway"                               | **Manager ne kaam beech mein rok diya**                                       |
+| `delay()`         | "Pause point where cancellation is checked"             | **Kaam rukne ki jagah jahan worker check karta hai ke kaam cancel hua ya nahi** |
+| `finally` block   | "Always clean up after stopping"                        | **Kaam chhodne ke baad desk saaf karna zaroori hai**                          |
+
+---
+
+## 💻 Code Examples
+
+### 📄 Report Compilation with Cancellation Logic
+
+```kotlin
+// Import coroutine utilities
+import kotlinx.coroutines.*
+
+fun main() = runBlocking {
+    println("Manager (Main): I need this 100-section report compiled. Start working.")
+
+    // Start the worker coroutine that will do the long task
+    val workerJob = launch {
+        try {
+            // The worker will compile 100 sections
+            repeat(100) { i ->
+                println("  Worker (Job): Compiling report, section ${i + 1}...")
+                
+                // 'delay()' is a suspension point.
+                // The coroutine checks for cancellation here — 
+                // if cancelled, it throws a CancellationException.
+                delay(500L)
+            }
+        } catch (e: CancellationException) {
+            println("  Worker (Job): Ah! The manager told me to stop. ${e.message}")
+        } finally {
+            // This block always runs (even after cancellation)
+            // Used for cleanup work like closing files or releasing resources.
+            println("  Worker (Job): Stopping work and cleaning up my desk.")
+        }
+    }
+
+    // Let the worker run for 1.3 seconds before interrupting
+    println("\nManager (Main): (Letting worker run for 1.3 seconds...)\n")
+    delay(1300L)
+
+    // C = Cut Off Coroutine
+    // Cancel the worker — sends a cancellation signal
+    println("Manager (Main): That's enough. STOP THE TASK!")
+    workerJob.cancel() // Cancel signal sent
+
+    // Wait for the worker to finish its 'finally' block
+    workerJob.join()
+
+    println("Manager (Main): Good, the worker has stopped.")
+}
+```
+
+---
+---
