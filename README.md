@@ -1103,3 +1103,96 @@ fun main() = runBlocking { // The "Restaurant" is the main CoroutineScope
 
 ---
 ---
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🔄 Context Switching with `withContext(IO)` & `withContext(Default)`  
+
+## 🔤 Definitions
+
+- **`withContext(Dispatchers.IO)`**  
+  Switches coroutine execution to a thread optimized for I/O-bound tasks like network calls or file access.
+
+- **`withContext(Dispatchers.Default)`**  
+  Switches coroutine execution to a thread optimized for CPU-bound tasks like data processing or computation.
+
+- **Context Switching**  
+  Allows coroutines to run on the most suitable thread pool for their workload, improving performance and responsiveness.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Concept                   | Mnemonic (English)                                      | Analogy (Urdu)                                                                 |
+|----------------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
+| `withContext(IO)`          | "Send task to the Network Department"                  | **Kaam ko Network Department mein bhej diya gaya (file ya server se data lena)** |
+| `withContext(Default)`     | "Send task to the Analytics Department"                | **Kaam ko Analytics Department mein bhej diya gaya (data process karna)**     |
+| `runBlocking`              | "Manager’s Office that coordinates everything"         | **Manager ka office jahan se saare departments ko kaam diya jata hai**        |
+
+---
+
+## 💻 Code Examples
+
+### 🧠 Manager Delegates Tasks to Network & Analytics Departments
+
+```kotlin
+import kotlinx.coroutines.*
+
+// 🌐 This function represents the "Network Department"
+// It performs IO-bound work such as fetching data from a server.
+suspend fun fetchReportFromNetwork(): String {
+    println("  [Manager]: Handing off task to Network Department...")
+
+    // ⚙️ WC = Work Context Switch
+    // Switch to Dispatchers.IO (for network or disk operations)
+    val report = withContext(Dispatchers.IO) {
+        println("    [Network Dept]: Starting fetch on thread: ${Thread.currentThread().name}")
+        delay(1000L) // Simulate a network delay
+        println("    [Network Dept]: ...Data fetched.")
+        "Confidential Report Data" // Value returned from this block
+    }
+
+    // 🔙 After withContext, we automatically return to the caller's thread
+    println("  [Manager]: ...Got the report back!")
+    return report
+}
+
+// 📊 This function represents the "Analytics Department"
+// It performs CPU-heavy computations (data analysis, etc.)
+suspend fun analyzeReport(data: String): String {
+    println("  [Manager]: Handing off report to Analytics Department...")
+
+    // ⚙️ WC = Work Context Switch
+    // Switch to Dispatchers.Default (for CPU-intensive processing)
+    val analysis = withContext(Dispatchers.Default) {
+        println("    [Analytics Dept]: Starting analysis on thread: ${Thread.currentThread().name}")
+        // Simulate a CPU-heavy operation
+        val processedData = data.uppercase().reversed()
+        delay(1000L) // Simulate computation time
+        println("    [Analytics Dept]: ...Analysis complete.")
+        "'$processedData'" // Return the processed (analyzed) result
+    }
+
+    println("  [Manager]: ...Got the analysis back!")
+    return analysis
+}
+
+fun main() = runBlocking { // 🧠 The "Manager's Office"
+    println("[Manager]: Starting work in my office on thread: ${Thread.currentThread().name}")
+
+    // --- 📨 Task 1: Fetching Report from Network ---
+    val reportData = fetchReportFromNetwork()
+    println("[Manager]: Back in office, checking my thread: ${Thread.currentThread().name}")
+    println("[Manager]: Received data: '$reportData'\n")
+
+    // --- 📈 Task 2: Analyzing the Report ---
+    val finalAnalysis = analyzeReport(reportData)
+    println("[Manager]: Back in office again, thread is: ${Thread.currentThread().name}")
+    println("[Manager]: Final result: $finalAnalysis")
+
+    println("\n[Manager]: ✅ All tasks done. My thread never got blocked!")
+}
+```
+
+---
+---
