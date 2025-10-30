@@ -544,3 +544,84 @@ fun main() = runBlocking {
 
 ---
 ---
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 📊 Coroutine State Checks: `isActive`, `isCompleted`, `isCancelled`  
+
+## 🔤 Definitions (isActive , isCompleted, isCancelled)
+
+- **`isActive`**  
+  Returns `true` if the coroutine is currently running and hasn’t completed or been cancelled.
+
+- **`isCompleted`**  
+  Returns `true` if the coroutine has finished successfully or with an exception.
+
+- **`isCancelled`**  
+  Returns `true` if the coroutine was cancelled before completion.
+
+- **`yield()`**  
+  Gives other coroutines a chance to run. Useful for cooperative multitasking.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Property         | Mnemonic (English)                                      | Analogy (Urdu)                                                                 |
+|------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
+| `isActive`       | "Is the worker still busy?"                             | **Kya worker abhi bhi kaam mein masroof hai?**                                |
+| `isCompleted`    | "Has the worker finished the task?"                     | **Kya worker ne kaam mukammal kar liya hai?**                                 |
+| `isCancelled`    | "Was the task stopped midway?"                          | **Kya kaam beech mein rok diya gaya tha?**                                    |
+| `yield()`        | "Let others take a turn"                                | **Thodi der ke liye doosre ko kaam karne do**                                |
+
+---
+
+## 💻 Code Examples
+
+### 🧪 Monitoring Coroutine Lifecycle States
+
+```kotlin
+import kotlinx.coroutines.*  // Import coroutine library
+
+fun main() = runBlocking {
+    println("Manager: I'm launching a worker for a 2-second task.")
+
+    // Launch a coroutine as a Job
+    val workerJob = launch {
+        println("  Worker (Job): Starting my task...")
+        delay(2000L) // Simulate a 2-second task
+        println("  Worker (Job): ...Task complete.")
+    }
+
+    yield() // Let coroutine start before checking status
+
+    // ✅ Check 1 — right after start: should be active
+    println("Manager (at 0ms): Is the worker active? ${workerJob.isActive}")
+
+    println("Manager: I'll do other work for 1 second...")
+    delay(1000L) // Simulate manager’s work
+
+    // ✅ Check 2 — after 1 second: still active
+    println("Manager (at 1000ms): Still active? ${workerJob.isActive}")
+
+    // Wait for the coroutine to complete
+    println("Manager: Waiting for the worker to finish...")
+    if (workerJob.isActive) println("Job is still active before join()")
+
+    workerJob.join() // Suspend until worker finishes
+
+    // ✅ Check 3 — after join(): check job states
+    when {
+        workerJob.isActive -> println("Job is unexpectedly still active.")
+        workerJob.isCompleted -> println("Job has completed successfully.")
+        workerJob.isCancelled -> println("Job was cancelled.")
+        else -> println("Job state unknown.")
+    }
+
+    // Final confirmation
+    println("Manager (at 2000ms): Final IsActive = ${workerJob.isActive}")
+}
+```
+
+---
+---
