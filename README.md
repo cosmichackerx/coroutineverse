@@ -948,3 +948,75 @@ fun main() = runBlocking {
 
 ---
 ---
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+## 🌐 `GlobalScope` vs Local Scope (`runBlocking`)  
+
+## 🔤 Definitions ( GlobalScope vs Local Scope (`runBlocking`) )
+
+- **`GlobalScope.launch {}`**  
+  Launches a coroutine that lives independently of the current scope. It’s not tied to the lifecycle of the caller (e.g., `runBlocking`, `Activity`, etc.).
+
+- **`launch {}` inside `runBlocking`**  
+  Launches a coroutine that is a child of the current scope. It automatically completes when the parent (`runBlocking`) finishes.
+
+- **`join()`**  
+  Suspends the current coroutine until the target coroutine finishes. Required for `GlobalScope` jobs if you want to wait for them manually.
+
+---
+
+## 🧠 Mnemonics & Analogies (English + Urdu)
+
+| Concept             | Mnemonic (English)                                      | Analogy (Urdu)                                                                 |
+|----------------------|----------------------------------------------------------|--------------------------------------------------------------------------------|
+| `GlobalScope`        | "Company-wide task that runs independently"            | **Company ka backup jo manager ke scope se bahar hai**                        |
+| `runBlocking`        | "Manager’s desk supervising team tasks"                | **Manager ka desk jahan sirf apni team ka kaam monitor hota hai**            |
+| `join()`             | "Wait manually for independent task to finish"         | **Manager ko backup ka intezar khud se karna padta hai**                     |
+
+---
+
+## 💻 Code Examples
+
+### 🧑‍💼 Team Task vs Global Backup with `GlobalScope`
+
+```kotlin
+import kotlinx.coroutines.*
+
+// Opt-in for using GlobalScope safely
+@OptIn(DelicateCoroutinesApi::class)
+fun main() = runBlocking {
+    // runBlocking = Acts like the "Manager" supervising all team tasks in one scope
+    println("Manager (runBlocking): My shift has started.\n")
+
+    // 1️⃣ Launch a normal coroutine (child of runBlocking)
+    launch {
+        println("  [Team Task]: Starting our short task... (500ms)")
+        delay(500L) // Simulate a short team task
+        println("  [Team Task]: ...Team task is done.\n")
+    }
+
+    // 2️⃣ Launch a coroutine in GlobalScope (not a child of runBlocking)
+    val globalJob = GlobalScope.launch {
+        println("    [GlobalScope]: Starting 'All-Night Backup'... (takes 1000ms)")
+        delay(1000L) // Simulate a longer, company-wide operation
+        println("    [GlobalScope]: ...'All-Night Backup' is complete.\n")
+    }
+
+    // Manager continues after starting both coroutines
+    println("Manager (runBlocking): I've started my 'Team Task' and the 'Global Backup'.")
+    println("Manager (runBlocking): I only have to wait for my own team...\n")
+
+    // ✅ runBlocking automatically waits for its own child coroutines (like 'launch')
+    // ❌ But it does NOT wait for GlobalScope coroutines — those live independently
+
+    println("Manager (runBlocking): ...Ok, my team is done. Now I'll manually wait for the 'Global Backup' to finish.")
+    globalJob.join() // Manually wait for GlobalScope job to finish
+
+    // Everything done
+    println("\nManager (runBlocking): Everything is finished. My shift is over.")
+}
+```
+
+---
+---
