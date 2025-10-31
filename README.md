@@ -1416,3 +1416,70 @@ fun main() = runBlocking { // 🏢 The "Manager's Office" (Main Thread)
 
 ---
 ---
+
+## 🧵 **Kotlin Coroutine Keywords — Android App Edition**
+
+| 🧩 **Keyword / Concept** | 💬 **Definition**                                                     | 📱 **Real Android App Analogy (Play Store)**                                                                |
+| ------------------------ | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| 🌀 `Coroutine`           | A lightweight thread used for asynchronous or concurrent programming. | Like **Spotify** handling multiple songs, downloads, and UI animations *simultaneously* without freezing 🎶 |
+| 🚀 `runBlocking`         | Blocks the current thread until all coroutines inside it finish.      | Like **YouTube** waiting for video buffering to complete before starting playback ▶️                        |
+| ✨ `launch`               | Starts a new coroutine that doesn’t return a value (fire and forget). | Like **Instagram Stories** uploading in the background while you scroll 📸                                  |
+| ⏱️ `delay`               | Suspends coroutine for a specific time *without blocking thread*.     | Like **WhatsApp** showing “typing…” delay before message sends 💬                                           |
+| ⚡ `async`                | Launches a coroutine that returns a result (via `Deferred`).          | Like **Google Drive** uploading multiple files simultaneously and returning status 📤                       |
+| ⛓️ `await`               | Waits for result from an `async` coroutine.                           | Like **Netflix** waiting for the video stream to buffer before continuing 🎬                                |
+| 🎯 `Deferred`            | Represents a future value from an async coroutine.                    | Like **Amazon** order tracker showing “Expected Delivery” — value yet to come 📦                            |
+| 💤 `Thread.sleep`        | Blocks the thread completely (old-school way).                        | Like **an app freezing** while waiting for a slow network ❌                                                 |
+| 🔁 `repeat`              | Repeats a block of code n times.                                      | Like **TikTok** refreshing feed every few seconds automatically 🔄                                          |
+| 🧘‍♀️ `yield`            | Suspends the coroutine to let others run temporarily.                 | Like **Snapchat** pausing camera preview while switching filters 🎭                                         |
+
+---
+
+## 🧑‍💼 **Job Control**
+
+| ⚙️ **Keyword**             | 💬 **Definition**                               | 📱 **Example (Play Store App)**                                       |
+| -------------------------- | ----------------------------------------------- | --------------------------------------------------------------------- |
+| 🔗 `job.join`              | Waits for a specific coroutine job to complete. | Like **Google Photos** waiting for one upload before syncing album 📷 |
+| 🪢 `join`                  | Same as above but called directly on coroutine. | Like **Gmail** waiting for draft auto-save before sending email ✉️    |
+| 🧨 `cancel`                | Cancels a coroutine before completion.          | Like **Spotify** stopping a song download manually 🎵❌                |
+| 💥 `CancellationException` | Exception thrown when coroutine is cancelled.   | Like **Play Store** showing “Download Cancelled” message ⚠️           |
+
+---
+
+## 🧪 **State Inspection**
+
+| 🔍 **Keyword**   | 💬 **Definition**                            | 📱 **Example (Play Store App)**                         |
+| ---------------- | -------------------------------------------- | ------------------------------------------------------- |
+| 🟢 `isActive`    | Returns true if coroutine is still running.  | Like **YouTube** checking if video is still buffering ⏳ |
+| 🏁 `isCompleted` | Returns true if coroutine finished normally. | Like **Instagram Reels** fully uploaded ✅               |
+| ❌ `isCancelled`  | Returns true if coroutine was cancelled.     | Like **Telegram** showing “Upload Cancelled” message 📵 |
+
+---
+
+## 🧭 **Dispatchers**
+
+| 🧭 **Dispatcher Type**      | 💬 **Definition**                                           | 📱 **Example (Play Store App)**                                   |
+| --------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------- |
+| ⚙️ `Dispatchers.IO`         | For network or disk I/O tasks.                              | Like **YouTube** downloading thumbnails or streaming videos 🧩    |
+| 💻 `Dispatchers.Default`    | For CPU-intensive work (e.g., data parsing).                | Like **Snapseed** applying filters or image transformations 🧮    |
+| 🪶 `Dispatchers.Unconfined` | Starts coroutine in caller’s thread, resumes in any thread. | Like **Reddit** refreshing posts without strict thread control 🔄 |
+
+---
+
+## 🧮 **Utilities**
+
+| 🧰 **Utility**         | 💬 **Definition**                      | 📱 **Example (Play Store App)**                                 |
+| ---------------------- | -------------------------------------- | --------------------------------------------------------------- |
+| ⏱️ `measureTimeMillis` | Measures execution time of code block. | Like **Benchmark apps** measuring loading time of other apps 📊 |
+
+---
+
+## ⚖️ **Exception Handling**
+
+| 🧱 **Block / Keyword** | 💬 **Definition**                          | 📱 **Example (Play Store App)**                                     |
+| ---------------------- | ------------------------------------------ | ------------------------------------------------------------------- |
+| 🧩 `try`               | Code block to test risky operations.       | Like **Uber** trying to fetch GPS location 🚗                       |
+| 🚫 `catch`             | Handles errors or exceptions.              | Like **PayPal** showing “Connection Failed” popup ⚡                 |
+| 🧹 `finally`           | Runs after `try`/`catch`, always executed. | Like **Spotify** closing progress bar after any download outcome 🎵 |
+
+---
+---
