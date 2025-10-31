@@ -164,6 +164,7 @@ fun main() {
 ```
 
 ---
+![4](resources/4.png)
 ---
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -229,6 +230,7 @@ fun main() = runBlocking { // 'runBlocking' ensures main waits for all child cor
 ```
 
 ---
+![5](resources/5.png)
 ---
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -310,6 +312,7 @@ fun main() = runBlocking {
 ```
 
 ---
+![6](resources/6.png)
 ---
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
