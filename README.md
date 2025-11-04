@@ -3,7 +3,7 @@
 **Definitions** | **Mnemonics (English+Urdu)** | **Code Examples** | **Real-world use cases**
 
 ---
-![coroutineverse](resources/coroutineverse.png)
+![coroutineverse](resources/grok_image_xym5h3m.jpg)
 ---
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ## 🧵 Kotlin Coroutines  
